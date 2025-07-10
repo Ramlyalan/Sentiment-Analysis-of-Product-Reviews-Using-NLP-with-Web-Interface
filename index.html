@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sentiment Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>🛍️ Product Review Sentiment Analyzer</h1>
+
+    {% if history %}
+    <div class="history-box">
+      <h2>📜 History</h2>
+      <ul>
+        {% for entry in history %}
+          <li>
+            <strong>Review:</strong> {{ entry.review }}<br>
+            <strong>Sentiment:</strong> {{ entry.sentiment }} |
+            <strong>Confidence:</strong> {{ entry.confidence }}%
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/">
+      <textarea name="review" placeholder="Enter product review here..." required></textarea>
+      <div class="btns">
+        <button type="submit">Analyze</button>
+        <button type="button" onclick="startVoiceInput()">🎤 Voice</button>
+      </div>
+    </form>
+
+    {% if sentiment %}
+    <div class="result-box">
+      <p><strong>Sentiment:</strong> {{ sentiment }}</p>
+      <p><strong>Confidence:</strong> {{ confidence }}%</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function startVoiceInput() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.start();
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        document.querySelector('textarea[name="review"]').value = text;
+      };
+    }
+  </script>
+</body>
+</html>
